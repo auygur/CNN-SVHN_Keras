@@ -6,7 +6,7 @@ Approach:  On top of base model, batch normalization and other ML methods were a
 Achieved at least 85% test-set accuracy with a base model.
 
 
-## Effects of Batch Normalization (Visualization):
+## Effects of Batch Normalization:
 - Without Batch Normalization:
 <p align="center">
   <img src="withoutBatchNormalization.png"/>
