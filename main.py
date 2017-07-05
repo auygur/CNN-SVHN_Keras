@@ -1,38 +1,31 @@
-
 from __future__ import absolute_import
 from __future__ import print_function
-
-import keras
-from keras.models import Sequential
-from keras.layers import Dense, Dropout, Activation
-from keras.utils import np_utils
-
-from sklearn import datasets
-from sklearn.model_selection import train_test_split
-from sklearn.model_selection import GridSearchCV
-from keras.layers import BatchNormalization
-
-from keras.layers.core import Dense, Dropout, Activation, Flatten
-from keras.layers.convolutional import Convolution2D, MaxPooling2D
-from keras.utils import np_utils
-from keras.optimizers import SGD, Adadelta, Adagrad
-import scipy.io
 
 import os
 import itertools
 import numpy as np
+import scipy.io
 
+import keras
+from keras.models import Sequential
+from keras.utils import np_utils
+from keras.layers import Dense, Dropout, Activation, BatchNormalization,Flatten
+from keras.layers.convolutional import Convolution2D, MaxPooling2D
+from keras.optimizers import SGD, Adadelta, Adagrad
+
+from sklearn import datasets
+from sklearn.model_selection import train_test_split
+from sklearn.model_selection import GridSearchCV
 
 
 batch_size = 128
 nb_classes = 10
 nb_epoch = 20
-Train = scipy.io.loadmat('/rigel/edu/coms4995/train_32x32.mat')
-Test = scipy.io.loadmat('/rigel/edu/coms4995/test_32x32.mat')
+Train = scipy.io.loadmat('/rigel/edu/coms4995/train_32x32.mat') ## this should be replaced by a stored datapath on a GPU cluster
+Test = scipy.io.loadmat('/rigel/edu/coms4995/test_32x32.mat') ## this should be replaced by a stored datapath on a GPU cluster
 
 X_train = Train['X']
 y_train = Train['y']
-
 X_test = Test['X']
 y_test = Test['y']
 
@@ -44,12 +37,8 @@ X_test /= 255
 X_train = X_train[np.newaxis,...]
 X_train = np.swapaxes(X_train,0,4).squeeze()
 
-
-
 X_test = X_test[np.newaxis,...]
 X_test = np.swapaxes(X_test,0,4).squeeze()
-
-
 
 
 np.place(y_train,y_train == 10,0)
@@ -65,43 +54,20 @@ model = Sequential()
 #WITHOUT batch normalization
 model.add(Convolution2D(32, 3, 3, border_mode='same',
                         input_shape=(32, 32, 3)))
-
-
 model.add(Activation('relu'))
-
-
-
 model.add(Convolution2D(32, 3, 3))
-
-
 model.add(Activation('relu'))
-
-
 model.add(MaxPooling2D(pool_size=(2, 2)))
 model.add(Dropout(0.25))
-
-
 model.add(Convolution2D(64, 3, 3, border_mode='same'))
 model.add(Activation('relu'))
-
-
-
 model.add(Convolution2D(64, 3, 3))
 model.add(Activation('relu'))
-
-
-
 model.add(MaxPooling2D(pool_size=(2, 2)))
 model.add(Dropout(0.25))
-
 model.add(Flatten())
-
-
 model.add(Dense(512))
 model.add(Activation('relu'))
-
-
-
 model.add(Dropout(0.5))
 model.add(Dense(nb_classes))
 model.add(Activation('softmax'))
@@ -115,8 +81,6 @@ score = model.evaluate(X_test, y_test, verbose=0)
 print('loss:', score[0])
 print('Test accuracy:', score[1])
 
-
-
 #Test score: 0.332611555633
 #Test accuracy: 0.904732636755
 
@@ -125,46 +89,28 @@ print('Test accuracy:', score[1])
 # WITH Batch Normalization
 
 model = Sequential()
-
 model.add(Convolution2D(32, 3, 3, border_mode='same',
                         input_shape=(32, 32, 3)))
-
-
 model.add(Activation('relu'))
 model.add(BatchNormalization())
-
-
 model.add(Convolution2D(32, 3, 3))
-
-
 model.add(Activation('relu'))
 model.add(BatchNormalization())
-
 model.add(MaxPooling2D(pool_size=(2, 2)))
 model.add(Dropout(0.25))
-
-
 model.add(Convolution2D(64, 3, 3, border_mode='same'))
 model.add(Activation('relu'))
 model.add(BatchNormalization())
-
-
 model.add(Convolution2D(64, 3, 3))
 model.add(Activation('relu'))
 model.add(BatchNormalization())
-
-
 model.add(MaxPooling2D(pool_size=(2, 2)))
 model.add(Dropout(0.25))
-
 model.add(Flatten())
 model.add(BatchNormalization())
-
 model.add(Dense(512))
 model.add(Activation('relu'))
 model.add(BatchNormalization())
-
-
 model.add(Dropout(0.5))
 model.add(Dense(nb_classes))
 model.add(Activation('softmax'))
